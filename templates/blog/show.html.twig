@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<article>
+    <h2>{{ article.title }}</h2>
+    <div class="metadata"> Ecrit le {{ article.CreatedAt | date('d/m/Y')}} à  {{article.createdAt | date('H:i') }}
+    dans la catégorie {{ article.category.title }}</div>
+    <div class="content">
+        <img src="{{article.image}}" alt="">
+        <p>{{ article.content | raw }}</p>
+        
+    </div>
+</article>
+
+
+<a href="{{ path('blog_edit', {'id': article.id}) }}" class="btn btn-warning">Modifier</a>
+
+<section id="commentaires">
+    
+    <h1>{{ article.comments | length }} commentaires: </h1>{% if app.user == false %} <p>(vous ne pouvez pas commenter sans être connecté)</p>{% endif %}
+    {% if app.user %}
+    {{ form_start(commentForm) }}
+    {{ form_row(commentForm.author) }}
+    {{ form_row(commentForm.content) }}
+    <button type="submit" class="btn btn-success"> Commenter </button>
+    {{ form_end(commentForm) }}
+    {% else %}
+    <a href="{{ path('security_login')}}" class="btn btn-info">Connexion</a>
+    {% endif %}
+
+{%  for comment in article.comments %}
+    <div class="comment">
+        <div class="row">
+            <div class="col-3">
+                {{ comment.author }} (<small>{{ comment.createdAt | date('d/m/Y à H:i')}}</small>)
+            </div>
+            <div class="col">
+                {{comment.content | raw }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}
